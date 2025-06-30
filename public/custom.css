@@ -1,0 +1,124 @@
+/* Hide the "Built with Chainlit" watermark */
+.watermark {
+    display: none !important;
+}
+
+/* Hide the watermark link */
+a[href="https://chainlit.io"] {
+    display: none !important;
+}
+
+/* Hide elements with watermark class */
+[class*="watermark"] {
+    display: none !important;
+}
+
+/* Hide the footer container */
+[data-testid="footer"] {
+    display: none !important;
+}
+
+/* Alternative selectors in case the above doesn't work */
+.footer,
+.chainlit-footer,
+[class*="footer"],
+[class*="chainlit"] {
+    display: none !important;
+}
+
+/* Hide any element containing "Built with Chainlit" text */
+*:contains("Built with Chainlit") {
+    display: none !important;
+}
+
+/* Hide footer elements by common class patterns */
+[class*="Footer"],
+[class*="footer"] {
+    display: none !important;
+}
+
+/* Target the specific watermark structure */
+a.watermark,
+a[target="_blank"].watermark {
+    display: none !important;
+}
+
+/* Make the logo larger */
+/* Target the main logo container */
+[data-testid="logo"],
+.logo,
+[class*="logo"] {
+    transform: scale(1.3) !important;
+    transform-origin: center !important;
+}
+
+/* Target the logo image specifically */
+[data-testid="logo"] img,
+.logo img,
+[class*="logo"] img {
+    width: auto !important;
+    height: auto !important;
+    max-width: 200px !important;
+    max-height: 200px !important;
+}
+
+/* Alternative selectors for logo elements */
+img[src*="logo"],
+img[alt*="logo"],
+img[alt*="Logo"] {
+    width: auto !important;
+    height: auto !important;
+    max-width: 200px !important;
+    max-height: 200px !important;
+}
+
+/* Target the header logo area */
+header img,
+[data-testid="header"] img,
+[class*="header"] img {
+    width: auto !important;
+    height: auto !important;
+    max-width: 200px !important;
+    max-height: 200px !important;
+}
+
+/* Perform Assistant Top Bar and Button Group */
+#perform-top-bar {
+    background: transparent;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 24px;
+}
+#perform-logo-img {
+    display: block;
+    margin: 0 auto 12px auto;
+    max-width: 180px;
+    max-height: 180px;
+}
+#perform-mode-buttons {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+.perform-mode-btn {
+    padding: 8px 20px;
+    font-size: 1rem;
+    border: 2px solid #1976d2;
+    background: #f5faff;
+    color: #1976d2;
+    border-radius: 24px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s, border 0.2s;
+    outline: none;
+}
+.perform-mode-btn:hover {
+    background: #e3f0ff;
+    color: #125ea7;
+    border-color: #125ea7;
+}
+.perform-btn-selected {
+    background: #1976d2;
+    color: #fff;
+    border-color: #1976d2;
+} 
