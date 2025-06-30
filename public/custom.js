@@ -18,8 +18,8 @@ window.addEventListener('DOMContentLoaded', function () {
   const logo = document.createElement('img');
   logo.src = getLogoPath();
   logo.alt = 'Perform Assistant Logo';
-  logo.style.maxWidth = '180px';
-  logo.style.maxHeight = '180px';
+  logo.style.maxWidth = '260px';
+  logo.style.maxHeight = '260px';
   logo.style.marginBottom = '12px';
   logo.id = 'perform-logo-img';
   topBar.appendChild(logo);
@@ -41,6 +41,26 @@ window.addEventListener('DOMContentLoaded', function () {
   let selectedMode = localStorage.getItem('perform_mode') || 'goals';
   localStorage.setItem('perform_mode', selectedMode);
 
+  // Description element
+  const description = document.createElement('div');
+  description.id = 'perform-description';
+  description.style.textAlign = 'center';
+  description.style.maxWidth = '600px';
+  description.style.margin = '0 auto';
+  description.style.padding = '8px 0';
+  description.style.fontSize = '14px';
+  description.style.lineHeight = '1.5';
+  description.style.opacity = '0.8';
+
+  function updateDescription() {
+    const descriptions = {
+      goals: "I'm here to help you write and achieve your work goals. I can help you clarify objectives, break them down into actionable steps, and provide guidance on goal-setting best practices.",
+      feedback: "I'm your expert in giving and receiving professional feedback. I can help you phrase constructive feedback, receive feedback gracefully, and foster a positive feedback culture.",
+      self: "I'm your self-assessment specialist. I can help you reflect on your strengths, identify areas for growth, and create actionable self-improvement plans."
+    };
+    description.textContent = descriptions[selectedMode] || descriptions.goals;
+  }
+
   function updateButtonStyles() {
     modes.forEach(({ key }) => {
       const btn = document.getElementById('perform-btn-' + key);
@@ -52,6 +72,7 @@ window.addEventListener('DOMContentLoaded', function () {
         }
       }
     });
+    updateDescription();
   }
 
   modes.forEach(({ key, label }) => {
@@ -67,13 +88,15 @@ window.addEventListener('DOMContentLoaded', function () {
     buttonGroup.appendChild(btn);
   });
   topBar.appendChild(buttonGroup);
+  topBar.appendChild(description);
 
-  // Insert the top bar at the top of the page (before the chat container)
-  const mainContainer = document.querySelector('main') || document.body;
-  if (mainContainer.firstChild) {
-    mainContainer.insertBefore(topBar, mainContainer.firstChild);
+  // Insert the top bar above the main chat container
+  const mainContainer = document.querySelector('main');
+  if (mainContainer && mainContainer.parentNode) {
+    mainContainer.parentNode.insertBefore(topBar, mainContainer);
   } else {
-    mainContainer.appendChild(topBar);
+    // fallback: append to body if main not found
+    document.body.insertBefore(topBar, document.body.firstChild);
   }
 
   // Initial button style update

@@ -47,8 +47,9 @@ def log_user_interaction(ip_address: str, question: str, timestamp: str = None):
 class PerformAssistant:
     def __init__(self):
         """Initialize Perform Assistant with LLM"""
+        #self.llm_client = OpenAI(api_key=os.getenv("LLM_API_KEY"), base_url="")
         self.llm_client = OpenAI(api_key=os.getenv("LLM_API_KEY"))
-    
+
     def generate_response(self, query: str) -> str:
         """Parse mode from query, select prompt/model, and generate response."""
         # Default mode
