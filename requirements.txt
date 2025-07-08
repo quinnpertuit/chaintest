@@ -2,6 +2,4 @@ chainlit
 openai
 python-dotenv
 playwright
-httpx
-PyJWT
-cryptography 
+httpx 

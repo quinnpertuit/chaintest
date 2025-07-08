@@ -4,7 +4,7 @@ cookbook
 cookbook/auth
 cookbook/*
 custom-oauth-provider-notes.txt
-
+oauth-base-class-notes.txt
 # Python
 __pycache__/
 *.py[cod]

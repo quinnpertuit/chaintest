@@ -7,12 +7,13 @@ import json
 import re
 from typing import Optional, Dict
 from inject_org_auth import add_org_oauth_provider
+from org_oauth_provider import OrgOAuthProvider
 
 # Load environment variables
 load_dotenv()
 
-# Add custom OAuth provider
-add_org_oauth_provider()
+# Add custom OAuth provider to Chainlit's providers list
+add_org_oauth_provider("org-openid", OrgOAuthProvider())
 
 def log_user_interaction(ip_address: str, question: str, timestamp: str = None):
     """Log user interactions to a JSON file"""
@@ -116,15 +117,12 @@ def oauth_callback(
     raw_user_data: Dict[str, str],
     default_user: cl.User,
 ) -> Optional[cl.User]:
-    """Handle OAuth callback and user authentication"""
+    """Handle OAuth callback - group validation already done in provider"""
     print(f"OAuth callback for provider: {provider_id}")
     print(f"User data: {json.dumps(raw_user_data, indent=2)}")
     
-    # For our org provider, the user object is already created with proper permissions
-    # If we get here, the user has already been validated to have the required group
-    if provider_id == "org-openid":
-        return default_user
-    
+    # If we get here, the user has already passed group validation in the custom provider
+    # Just return the user object that was created by the provider
     return default_user
 
 @cl.on_chat_start

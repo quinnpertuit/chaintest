@@ -5,16 +5,15 @@
 Add these environment variables to your `.env` file:
 
 ```bash
-# OAuth Configuration
+# Required for Chainlit authentication
+CHAINLIT_AUTH_SECRET=your_generated_secret
+
+# Custom Organization OAuth Provider
 OAUTH_ORG_CLIENT_ID=your_client_id
 OAUTH_ORG_CLIENT_SECRET=your_client_secret
 OAUTH_ORG_AUTHORIZE_URL=https://your-org.com/oauth/authorize
 OAUTH_ORG_TOKEN_URL=https://your-org.com/oauth/token
 OAUTH_ORG_USERINFO_URL=https://your-org.com/userinfo
-
-# Optional (for JWT validation)
-OAUTH_ORG_JWKS_URL=https://your-org.com/.well-known/jwks.json
-OAUTH_ORG_ISSUER=https://your-org.com
 
 # Your existing LLM configuration
 LLM_API_KEY=your_llm_api_key
@@ -33,6 +32,21 @@ The system expects user info in this format:
   "email": "karl.lone@company.com"
 }
 ```
+
+## How It Works
+
+This implementation follows the Chainlit cookbook pattern for custom OAuth providers:
+
+1. **Custom Provider Class**: `OrgOAuthProvider` extends Chainlit's `OAuthProvider` base class
+2. **Runtime Injection**: The provider is added to Chainlit's `providers` list at startup
+3. **Group Validation**: Access control happens in the provider's `get_user_info()` method
+4. **Personalized Sessions**: Creates user objects with organization metadata
+
+## Implementation Files
+
+- `org_oauth_provider.py` - Custom OAuth provider class
+- `inject_org_auth.py` - Injects provider into Chainlit's providers list
+- `main.py` - Imports and executes the injection at startup
 
 ## Access Control
 
@@ -54,9 +68,11 @@ To test the OAuth integration:
 
 1. Set up the environment variables in your `.env` file
 2. Configure your OAuth provider to redirect to: `http://localhost:8000/auth/callback`
-3. Start the application: `chainlit run main.py`
-4. Visit the app - you should be redirected to login
-5. After login, you should see the personalized welcome message
+3. Install dependencies: `pip install -r requirements.txt`
+4. Start the application: `chainlit run main.py`
+5. You should see console output confirming the provider was added
+6. Visit the app - you should be redirected to your organization's login
+7. After successful login with group membership, you'll see the personalized welcome
 
 ## Troubleshooting
 
