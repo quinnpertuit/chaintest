@@ -5,9 +5,14 @@ from dotenv import load_dotenv
 from datetime import datetime
 import json
 import re
+from typing import Optional, Dict
+from inject_org_auth import add_org_oauth_provider
 
 # Load environment variables
 load_dotenv()
+
+# Add custom OAuth provider
+add_org_oauth_provider()
 
 def log_user_interaction(ip_address: str, question: str, timestamp: str = None):
     """Log user interactions to a JSON file"""
@@ -44,6 +49,7 @@ def log_user_interaction(ip_address: str, question: str, timestamp: str = None):
     except Exception as e:
         print(f"Error logging interaction: {e}")
 
+
 class PerformAssistant:
     def __init__(self):
         """Initialize Perform Assistant with LLM"""
@@ -67,24 +73,24 @@ class PerformAssistant:
                 "You are Perform Assistant, a helpful AI assistant focused on helping users write and achieve their work goals. "
                 "etc."
             )
-            model = "llama-3.3-70b-instruct"
+            model = os.getenv("LLM_MODEL")
         elif mode == 'feedback':
             system_prompt = (
                 "You are Perform Assistant, an expert in giving and receiving professional feedback. "
                 "etc."
             )
-            model = "llama-3.3-70b-instruct"
+            model = os.getenv("LLM_MODEL")
         elif mode == 'self':
             system_prompt = (
                 "You are Perform Assistant, an expert in self-assessment and reflection. "
                 "etc."
             )
-            model = "llama-3.3-70b-instruct"
+            model = os.getenv("LLM_MODEL")
         else:
             system_prompt = (
                 "You are Perform Assistant, a helpful AI assistant for professional development."
             )
-            model = "llama-3.3-70b-instruct"
+            model = os.getenv("LLM_MODEL")
 
         try:
             response = self.llm_client.chat.completions.create(
@@ -103,6 +109,24 @@ class PerformAssistant:
 # Initialize assistant globally
 assistant = None
 
+@cl.oauth_callback
+def oauth_callback(
+    provider_id: str,
+    token: str,
+    raw_user_data: Dict[str, str],
+    default_user: cl.User,
+) -> Optional[cl.User]:
+    """Handle OAuth callback and user authentication"""
+    print(f"OAuth callback for provider: {provider_id}")
+    print(f"User data: {json.dumps(raw_user_data, indent=2)}")
+    
+    # For our org provider, the user object is already created with proper permissions
+    # If we get here, the user has already been validated to have the required group
+    if provider_id == "org-openid":
+        return default_user
+    
+    return default_user
+
 @cl.on_chat_start
 async def start():
     """Initialize the Perform Assistant when chat starts"""
@@ -120,10 +144,16 @@ async def start():
     
     try:
         assistant = PerformAssistant()
-        # Remove the automatic welcome message to keep the clean landing page with logo
-        # await cl.Message(
-        #     content="Hi! I'm Perform Assistant. I'm here to help you write and achieve your work goals. What would you like to work on today?"
-        # ).send()
+        
+        # Check if user is authenticated via OAuth
+        user = cl.user_session.get("user")
+        if user and user.metadata:
+            user_name = user.metadata.get("name", "there")
+            await cl.Message(
+                content=f"Welcome, {user_name}! How can I help you today?"
+            ).send()
+        # If no authenticated user, keep the clean landing page without automatic message
+        
     except Exception as e:
         await cl.Message(
             content=f"Error initializing Perform Assistant: {e}"

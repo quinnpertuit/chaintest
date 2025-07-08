@@ -1,5 +1,9 @@
 # Environment variables
 .env
+cookbook
+cookbook/auth
+cookbook/*
+custom-oauth-provider-notes.txt
 
 # Python
 __pycache__/
