@@ -15,42 +15,6 @@ load_dotenv()
 # Add custom OAuth provider to Chainlit's providers list
 add_org_oauth_provider("org-openid", OrgOAuthProvider())
 
-def log_user_interaction(ip_address: str, question: str, timestamp: str = None):
-    """Log user interactions to a JSON file"""
-    if timestamp is None:
-        timestamp = datetime.now().isoformat()
-    
-    log_entry = {
-        "ip_address": ip_address,
-        "question": question,
-        "timestamp": timestamp
-    }
-    
-    # Create logs directory if it doesn't exist
-    os.makedirs("logs", exist_ok=True)
-    
-    # Append to log file
-    log_file = "logs/user_interactions.json"
-    
-    try:
-        # Read existing logs
-        if os.path.exists(log_file):
-            with open(log_file, 'r') as f:
-                logs = json.load(f)
-        else:
-            logs = []
-        
-        # Add new entry
-        logs.append(log_entry)
-        
-        # Write back to file
-        with open(log_file, 'w') as f:
-            json.dump(logs, f, indent=2)
-            
-    except Exception as e:
-        print(f"Error logging interaction: {e}")
-
-
 class PerformAssistant:
     def __init__(self):
         """Initialize Perform Assistant with LLM"""
@@ -184,9 +148,6 @@ async def main(message: cl.Message):
                 ip_address = getattr(message.session, 'client_ip', 'unknown')
         except:
             pass
-        
-        # Log the user interaction
-        log_user_interaction(ip_address, message.content)
         
         # Generate response using the assistant
         response = assistant.generate_response(message.content)
